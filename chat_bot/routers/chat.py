@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlmodel import Session
 from chat_bot.models.chat import Chat
-from chat_bot.setting import engine, get_session
+from chat_bot.setting import  get_session
 from chat_bot.schema import chat_schems
 from sqlmodel import  Session, select
 
@@ -17,14 +17,14 @@ def create_number(input: chat_schems.CreateChat = Body(), session: Session = Dep
     if existing_chat is not None:
         raise HTTPException(status_code=400, detail="Phone number already exists")
 
-    new_number = Chat(**input.model_dump())
+    register_chat_number = Chat(**input.model_dump())
 
-    session.add(new_number)
+    session.add(register_chat_number)
 
     session.commit()
 
-    session.refresh(new_number)
+    session.refresh(register_chat_number)
 
-    return new_number
+    return register_chat_number
  except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

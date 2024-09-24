@@ -23,14 +23,12 @@ async def upload_file(file: UploadFile = File(...), session: Session = Depends(g
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON file")
 
-    # Use Langchain to embed data (example with OpenAI)
     embeddings = OpenAIEmbeddings()
     
     vectors = embeddings.embed_documents([json.dumps(doc) for doc in json_data])
     with Session(engine) as session:
      for doc, vector in zip(json_data, vectors):
-        # Convert vector to a NumPy array and then to bytes
-        vector_bytes = np.array(vector).astype(np.float32).tobytes()  # Ensure correct dtype
+        vector_bytes = np.array(vector).astype(np.float32).tobytes()  
         new_file_data = FileData(
             file_name=file.filename,          
             content=json.dumps(doc),          
